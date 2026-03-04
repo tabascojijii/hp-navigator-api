@@ -108,16 +108,19 @@ def _build_fts_join(alias: str, tag: str, left: bool = False) -> tuple[str, str]
         f"{join_type} tracks_fts {alias} "
         f"ON t.id = {alias}.track_id AND {alias}.semantic_tags MATCH ?"
     )
+
+    # GPTからカンマ区切りで送られてくるケースも考慮し、カンマと全角スペースを半角スペースに置換
+    clean_tag = tag.replace("　", " ").replace(",", " ")
+    tags = [t.strip() for t in clean_tag.split() if t.strip()]
     
-    # 複数のタグがスペース（全角・半角）区切りで送られてきた場合に OR検索 に自動変換
-    tags = [t.strip() for t in tag.replace("　", " ").split() if t.strip()]
     if not tags:
         fts_param = 'semantic_tags:""'
     elif len(tags) == 1:
         fts_param = f'semantic_tags:"{tags[0]}"'
     else:
-        inner = " OR ".join(f'"{t}"' for t in tags)
-        fts_param = f'semantic_tags:({inner})'
+        # FTS5の古いパーサー(Vercel等の古いSQLite)でも確実に関係なく動くよう
+        # semantic_tags:("A" OR "B") ではなく semantic_tags:"A" OR semantic_tags:"B" とする
+        fts_param = " OR ".join(f'semantic_tags:"{t}"' for t in tags)
         
     return join_sql, fts_param
 

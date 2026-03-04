@@ -1,0 +1,9 @@
+
+Testing FTS param: semantic_tags:("16ビート" OR "クール" OR "ロック" OR "ダンス" OR "赤羽橋ファンク" OR "EDM")
+Result: 580
+
+Testing FTS param: semantic_tags:"16ビート" OR semantic_tags:"クール" OR semantic_tags:"ロック" OR semantic_tags:"ダンス" OR semantic_tags:"赤羽橋ファンク" OR semantic_tags:"EDM"
+Result: 580
+
+Testing FTS param: "16ビート" OR "クール" OR "ロック" OR "ダンス" OR "赤羽橋ファンク" OR "EDM"
+Result: 580
